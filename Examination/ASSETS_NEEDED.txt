@@ -1,0 +1,102 @@
+================================================================================
+ASSETS NEEDED - EXTERIOR SCENE / COMPOUND
+================================================================================
+
+Focus: Models and textures to make the outdoor area (grounds, pool, driveway,
+       garden, surroundings) look realistic and polished.
+
+================================================================================
+1. GROUND & LANDSCAPING
+================================================================================
+
+   ✓ Grass texture (ground-grassColor.jpeg) - INCLUDED
+     * Used for: Main ground plane, lawn areas
+
+   - Dirt/Path texture (dirt.jpg or path.jpg)
+     * Used for: Driveway, walkways, garden paths
+     * Size: 1024x1024
+     * Format: JPG
+
+   - Pavement/Concrete texture (pavement.jpg or concrete.jpg)
+     * Used for: Driveway, patio areas
+     * Size: 1024x1024
+     * Format: JPG
+
+================================================================================
+2. POOL AREA
+================================================================================
+
+   - Pool water texture (water_normal.jpg or water_ripples.png)
+     * Used for: Swimming pool water surface
+     * Size: 512x512
+     * Format: PNG (transparency for reflections)
+
+   - Pool tiles texture (pool_tiles.jpg or mosaic.jpg)
+     * Used for: Pool base, pool walls, pool deck
+     * Size: 1024x1024
+     * Format: JPG
+
+================================================================================
+3. TREES & PLANTS (Exterior)
+================================================================================
+
+   ✓ Tree bark texture (tree-bark-texture.jpg) - INCLUDED
+     * Used for: Tree trunks
+
+   ✓ Leaves texture (leaves-texture.webp) - INCLUDED
+     * Used for: Tree canopy, bushes, garden plants
+
+   - Tree model (tree.glb or tree.gltf)
+     * Used for: Realistic trees instead of cone primitives
+     * Optional: palm_tree.glb, oak_tree.glb, etc.
+
+   - Bush/Shrub model (bush.glb or shrub.glb)
+     * Used for: Garden landscaping
+     * Optional
+
+   - Plant/Flower model (plant.glb or flower_pot.glb)
+     * Used for: Garden beds, potted plants
+     * Optional
+
+================================================================================
+4. SKY & ENVIRONMENT
+================================================================================
+
+   ✓ Sky texture (new-sky.jfif) - INCLUDED
+     * Used for: Sky dome background
+
+   - Environment map (env_map.hdr)
+     * Used for: Reflections on water, car, villa
+     * Format: HDR (optional, for advanced look)
+
+================================================================================
+5. ALREADY INCLUDED
+================================================================================
+
+   ✓ Villa model (modern_villa_for_sale.glb)
+   ✓ Car model (2025_lexus_lx700h.glb)
+   ✓ Victorian street lamp (victorian_street_lamp.glb)
+
+================================================================================
+6. OPTIONAL EXTERIOR ENHANCEMENTS
+================================================================================
+
+   - Fence/Gate model (fence.glb) - for property boundary
+   - Outdoor furniture (patio_chair.glb, umbrella.glb)
+   - Garden decorations (fountain.glb, bird_bath.glb)
+   - Rock/Gravel texture - for garden beds or pathways
+
+================================================================================
+HOW TO ADD ASSETS
+================================================================================
+
+1. Place files in the Examination folder
+2. For textures: Add to <a-assets> and use in material:
+   <a-asset-item id="grassTex" src="grass.jpg"></a-asset-item>
+   material="src: #grassTex" (on ground plane)
+
+3. For 3D models: Add to <a-assets> and use:
+   <a-asset-item id="treeModel" src="tree.glb"></a-asset-item>
+   <a-entity gltf-model="#treeModel" position="..." scale="..."></a-entity>
+
+================================================================================

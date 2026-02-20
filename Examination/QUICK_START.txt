@@ -1,0 +1,86 @@
+================================================================================
+QUICK START GUIDE - Dream Villa VR Experience
+================================================================================
+
+IMMEDIATE STEPS TO GET STARTED:
+
+1. OPEN THE APPLICATION:
+   - Open "index.html" in a modern web browser (Chrome/Edge recommended)
+   - The scene will load automatically
+   - Wait for the villa model to load (may take a few seconds)
+
+2. NAVIGATION:
+   - Use WASD keys or Arrow keys to move
+   - Click and drag mouse to look around
+   - Click the VR button (top right) to enter VR mode if you have a headset
+
+3. EXPLORE:
+   - Walk around the villa
+   - Visit the three rooms: Living Room, Bedroom, Kitchen
+   - Check out the animated swimming pool
+   - See the trees, car, and pet dog
+
+4. FOR DEPLOYMENT:
+   - Upload entire "Examination" folder CONTENTS to your web server
+   - Ensure all .glb files are in the same folder as index.html
+   - Access via: https://YourIndexNumber.ceiscy.com/Examination/
+
+================================================================================
+FILES IN THIS FOLDER (Examination - THE ONLY PROJECT FOLDER):
+================================================================================
+
+✓ index.html                 - Main application file (OPEN THIS)
+✓ modern_villa_for_sale.glb   - Villa 3D model (REQUIRED)
+✓ 2025_lexus_lx700h.glb      - Lexus car model (INCLUDED)
+✓ victorian_street_lamp.glb  - Victorian street lamp model (INCLUDED)
+✓ ASSETS_NEEDED.txt          - List of optional textures/models to enhance visuals
+✓ README.md                  - Technical documentation
+✓ DESIGN_DOCUMENT.md         - Design choices and future improvements (for PDF)
+✓ QUICK_START.txt            - This file
+
+================================================================================
+REQUIREMENTS CHECKLIST:
+================================================================================
+
+✓ At least three rooms (Living Room, Bedroom, Kitchen) - COMPLETE
+✓ Furniture and decorations in each room - COMPLETE
+✓ Lights, home decor, animations - COMPLETE
+✓ Animated swimming pool with water in motion - COMPLETE
+✓ Additional models (trees, plants, vehicle, pet) - COMPLETE
+✓ Optimized for smooth performance - COMPLETE
+✓ Intuitive controls - COMPLETE
+
+================================================================================
+FOR SUBMISSION:
+================================================================================
+
+1. ZIP FILE:
+   - Create a zip file of the entire "Examination" folder
+   - Upload to VLE
+
+2. HOSTED APPLICATION:
+   - Deploy to: https://YourIndexNumber.ceiscy.com/Examination/
+   - Test the link before submission
+
+3. PDF DOCUMENT:
+   - Use DESIGN_DOCUMENT.md as reference
+   - Convert to PDF format
+   - Include: Design choices, Technical challenges, Future improvements
+
+================================================================================
+TROUBLESHOOTING:
+================================================================================
+
+Problem: Villa model not loading
+Solution: Ensure modern_villa_for_sale.glb is in the same folder as index.html
+
+Problem: Low frame rate
+Solution: Close other browser tabs, use Chrome/Edge, disable browser extensions
+
+Problem: Controls not working
+Solution: Click on the scene first to enable pointer lock, check browser console for errors
+
+Problem: VR mode not available
+Solution: Use Chrome/Edge, ensure WebXR is enabled in browser settings
+
+================================================================================

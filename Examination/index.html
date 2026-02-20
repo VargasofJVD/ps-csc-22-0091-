@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dream Villa VR Experience</title>
+    <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/donmccurdy/aframe-physics-system@v4.0.1/dist/aframe-physics-system.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/supermedium/superframe/components/animation/dist/aframe-animation-component.min.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            font-family: 'Arial', sans-serif;
+        }
+        #info {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            color: white;
+            background: rgba(0,0,0,0.7);
+            padding: 15px;
+            border-radius: 8px;
+            font-family: Arial, sans-serif;
+            z-index: 1000;
+            max-width: 300px;
+            backdrop-filter: blur(10px);
+        }
+        #info h3 {
+            margin-top: 0;
+            color: #4CC3D9;
+        }
+        #info p {
+            margin: 5px 0;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div id="info">
+        <h3>🏠 Dream Villa VR</h3>
+        <p>⌨️ Use WASD or arrow keys to move</p>
+        <p>🖱️ Click and drag to look around</p>
+        <p>📱 VR: Click the VR button to enter VR mode</p>
+        <p>🚪 ESC: Exit VR mode</p>
+    </div>
+
+    <a-scene 
+        vr-mode-ui="enabled: true"
+        renderer="antialias: true; colorManagement: true; sortObjects: true; physicallyCorrectLights: true"
+        physics="debug: false; gravity: -9.8"
+        background="color: #87CEEB"
+        fog="type: exponential; color: #87CEEB; density: 0.0005"
+        loading-screen="dotsColor: #0080e5; backgroundColor: #000000">
+        
+        <!-- Enhanced Lighting Setup -->
+        <a-light type="ambient" color="#ffffff" intensity="0.5"></a-light>
+        <a-light 
+            type="directional" 
+            position="50 50 50" 
+            intensity="1.0" 
+            cast-shadow="true"
+            shadow-map-size="2048"
+            shadow-camera-left="-50"
+            shadow-camera-right="50"
+            shadow-camera-top="50"
+            shadow-camera-bottom="-50">
+        </a-light>
+        <a-light type="directional" position="-50 30 -50" intensity="0.4" color="#ffaa88"></a-light>
+        <a-light type="point" position="0 10 0" intensity="0.6" distance="50" decay="2"></a-light>
+        
+        <!-- Sky with nice light blue color -->
+        <a-sky id="sky" color="#87CEEB" radius="500"></a-sky>
+        
+        <!-- Ground Plane with grass texture -->
+        <a-plane 
+            id="ground"
+            rotation="-90 0 0" 
+            width="200" 
+            height="200" 
+            position="0 0 0"
+            shadow="receive: true"
+            material="src: #grassTex; repeat: 10 10; roughness: 0.9; metalness: 0">
+        </a-plane>
+        
+        <!-- Main Villa Model -->
+        <a-entity 
+            id="villa"
+            gltf-model="#villaModel"
+            position="0 0 0"
+            scale="1 1 1"
+            shadow="cast: true; receive: true"
+            animation="property: rotation; to: 0 360 0; dur: 0; loop: false">
+        </a-entity>
+        
+        <!-- Swimming Pool with Advanced Water Animation -->
+        <a-entity id="pool-container" position="15 0 -10">
+            <!-- Pool Base -->
+            <a-box 
+                id="pool-base"
+                position="0 0.1 0"
+                width="8"
+                height="0.2"
+                depth="6"
+                color="#1a1a2e"
+                shadow="receive: true"
+                roughness="0.3"
+                metalness="0.1">
+            </a-box>
+            
+            <!-- Pool Walls -->
+            <a-box 
+                position="0 0.3 3"
+                width="8"
+                height="0.6"
+                depth="0.2"
+                color="#2a2a3e"
+                shadow="cast: true; receive: true">
+            </a-box>
+            <a-box 
+                position="0 0.3 -3"
+                width="8"
+                height="0.6"
+                depth="0.2"
+                color="#2a2a3e"
+                shadow="cast: true; receive: true">
+            </a-box>
+            <a-box 
+                position="4 0.3 0"
+                width="0.2"
+                height="0.6"
+                depth="6"
+                color="#2a2a3e"
+                shadow="cast: true; receive: true">
+            </a-box>
+            <a-box 
+                position="-4 0.3 0"
+                width="0.2"
+                height="0.6"
+                depth="6"
+                color="#2a2a3e"
+                shadow="cast: true; receive: true">
+            </a-box>
+            
+            <!-- Animated Water Layer 1 (JS-driven) -->
+            <a-box 
+                id="pool-water-1"
+                position="0 0.25 0"
+                width="7.8"
+                height="0.3"
+                depth="5.8"
+                color="#00CED1"
+                opacity="0.85">
+            </a-box>
+            
+            <!-- Animated Water Layer 2 (JS-driven, depth effect) -->
+            <a-box 
+                id="pool-water-2"
+                position="0 0.2 0"
+                width="7.6"
+                height="0.2"
+                depth="5.6"
+                color="#008B8B"
+                opacity="0.7">
+            </a-box>
+            
+            <!-- Pool Ripples Effect (JS-driven) -->
+            <a-plane 
+                id="pool-ripples"
+                position="0 0.3 0"
+                rotation="-90 0 0"
+                width="7.8"
+                height="5.8"
+                color="#00CED1"
+                opacity="0.25">
+            </a-plane>
+            
+            <!-- Pool Ladder -->
+            <a-box 
+                position="-3.5 0.5 2.8"
+                width="0.1"
+                height="1"
+                depth="0.1"
+                color="#C0C0C0"
+                shadow="cast: true; receive: true">
+            </a-box>
+            <a-box 
+                position="-3.5 0.5 2.5"
+                width="0.1"
+                height="1"
+                depth="0.1"
+                color="#C0C0C0"
+                shadow="cast: true; receive: true">
+            </a-box>
+            <a-box 
+                position="-3.5 0.8 2.65"
+                width="0.1"
+                height="0.1"
+                depth="0.3"
+                color="#C0C0C0"
+                shadow="cast: true; receive: true">
+            </a-box>
+        </a-entity>
+        
+        <!-- Living Room -->
+        <a-entity id="living-room" position="-5 0.5 5">
+            <!-- Sofa -->
+            <a-box 
+                position="0 0.4 0"
+                width="2"
+                height="0.8"
+                depth="0.8"
+                color="#8B4513"
+                shadow="cast: true; receive: true"
+                animation="property: rotation; to: 0 5 0; dur: 3000; easing: easeInOutSine; loop: true; dir: alternate"
+                class="clickable">
+            </a-box>
+            
+            <!-- Coffee Table -->
+            <a-cylinder 
+                position="0 0.2 1.5"
+                radius="0.5"
+                height="0.4"
+                color="#654321"
+                shadow="cast: true; receive: true"
+                class="clickable">
+            </a-cylinder>
+            
+            <!-- TV with animated screen -->
+            <a-entity position="0 1.2 -1.5">
+                <a-box 
+                    width="2.5"
+                    height="1.5"
+                    depth="0.1"
+                    color="#000000"
+                    shadow="cast: true; receive: true">
+                </a-box>
+                <a-plane 
+                    position="0 0 0.06"
+                    width="2.3"
+                    height="1.3"
+                    color="#001122"
+                    animation="property: material.color; to: #112233; dur: 2000; loop: true; dir: alternate"
+                    class="clickable">
+                </a-plane>
+            </a-entity>
+            
+            <!-- Lamp with animated glow -->
+            <a-entity position="-1.5 0.3 0">
+                <a-cylinder 
+                    radius="0.1"
+                    height="1.5"
+                    color="#FFD700">
+                </a-cylinder>
+                <a-sphere 
+                    position="0 1 0"
+                    radius="0.3"
+                    color="#FFD700"
+                    emissive="#FFD700"
+                    emissive-intensity="0.5"
+                    animation="property: emissive-intensity; to: 0.8; dur: 1500; loop: true; dir: alternate">
+                    <a-light type="point" color="#FFD700" intensity="0.5" distance="5"></a-light>
+                </a-sphere>
+            </a-entity>
+            
+            <!-- Decorative Plants -->
+            <a-cone 
+                position="1.5 0.3 0"
+                radius-bottom="0.3"
+                height="0.6"
+                color="#228B22"
+                shadow="cast: true; receive: true"
+                animation="property: rotation; to: 0 0 5; dur: 2000; easing: easeInOutSine; loop: true; dir: alternate">
+            </a-cone>
+            
+            <!-- Bookshelf -->
+            <a-box 
+                position="2 1 -1"
+                width="0.3"
+                height="1.5"
+                depth="0.8"
+                color="#8B4513"
+                shadow="cast: true; receive: true">
+            </a-box>
+        </a-entity>
+        
+        <!-- Bedroom -->
+        <a-entity id="bedroom" position="8 0.5 5">
+            <!-- Bed -->
+            <a-box 
+                position="0 0.3 0"
+                width="2"
+                height="0.6"
+                depth="1.5"
+                color="#4B0082"
+                shadow="cast: true; receive: true"
+                class="clickable">
+            </a-box>
+            
+            <!-- Bed Headboard -->
+            <a-box 
+                position="0 0.6 0.75"
+                width="2"
+                height="0.8"
+                depth="0.1"
+                color="#2F1B69"
+                shadow="cast: true; receive: true">
+            </a-box>
+            
+            <!-- Animated Pillows -->
+            <a-box 
+                position="-0.5 0.6 0.2"
+                width="0.6"
+                height="0.2"
+                depth="0.6"
+                color="#FFFFFF"
+                animation="property: rotation; to: -5 0 0; dur: 2000; easing: easeInOutSine; loop: true; dir: alternate">
+            </a-box>
+            <a-box 
+                position="0.5 0.6 0.2"
+                width="0.6"
+                height="0.2"
+                depth="0.6"
+                color="#FFFFFF"
+                animation="property: rotation; to: 5 0 0; dur: 2000; easing: easeInOutSine; loop: true; dir: alternate">
+            </a-box>
+            
+            <!-- Wardrobe -->
+            <a-box 
+                position="1.5 1 0"
+                width="1"
+                height="2"
+                depth="0.5"
+                color="#8B4513"
+                shadow="cast: true; receive: true"
+                class="clickable">
+            </a-box>
+            
+            <!-- Bedside Table with lamp -->
+            <a-entity position="-1.2 0.2 0">
+                <a-box 
+                    width="0.5"
+                    height="0.4"
+                    depth="0.5"
+                    color="#654321"
+                    shadow="cast: true; receive: true">
+                </a-box>
+                <a-cylinder 
+                    position="0 0.3 0"
+                    radius="0.15"
+                    height="0.1"
+                    color="#FFD700">
+                    <a-light type="point" color="#FFD700" intensity="0.3" distance="3"></a-light>
+                </a-cylinder>
+            </a-entity>
+            
+            <!-- Window with view -->
+            <a-box 
+                position="0 1.5 -1.5"
+                width="1.5"
+                height="1.5"
+                depth="0.1"
+                color="#87CEEB"
+                opacity="0.7">
+            </a-box>
+            
+            <!-- Mirror -->
+            <a-box 
+                position="-1.5 1.2 0"
+                width="0.1"
+                height="1"
+                depth="0.6"
+                color="#C0C0C0"
+                metalness="0.9"
+                roughness="0.1">
+            </a-box>
+        </a-entity>
+        
+        <!-- Kitchen -->
+        <a-entity id="kitchen" position="-8 0.5 -5">
+            <!-- Kitchen Counter -->
+            <a-box 
+                position="0 0.5 0"
+                width="3"
+                height="1"
+                depth="0.6"
+                color="#C0C0C0"
+                shadow="cast: true; receive: true"
+                metalness="0.3"
+                roughness="0.2">
+            </a-box>
+            
+            <!-- Stove with animated flames -->
+            <a-entity position="-1 0.6 0">
+                <a-box 
+                    width="0.8"
+                    height="0.2"
+                    depth="0.5"
+                    color="#000000"
+                    shadow="cast: true; receive: true">
+                </a-box>
+                <a-cylinder 
+                    position="-0.3 0.2 0"
+                    radius="0.15"
+                    height="0.05"
+                    color="#FF4500">
+                    <a-light type="point" color="#FF4500" intensity="0.2" distance="2"></a-light>
+                    <a-sphere 
+                        position="0 0.1 0"
+                        radius="0.08"
+                        color="#FFD700"
+                        emissive="#FFD700"
+                        animation="property: scale; to: 1.2 1.2 1.2; dur: 500; loop: true; dir: alternate">
+                    </a-sphere>
+                </a-cylinder>
+                <a-cylinder 
+                    position="0.3 0.2 0"
+                    radius="0.15"
+                    height="0.05"
+                    color="#FF4500">
+                    <a-light type="point" color="#FF4500" intensity="0.2" distance="2"></a-light>
+                    <a-sphere 
+                        position="0 0.1 0"
+                        radius="0.08"
+                        color="#FFD700"
+                        emissive="#FFD700"
+                        animation="property: scale; to: 1.2 1.2 1.2; dur: 500; loop: true; dir: alternate">
+                    </a-sphere>
+                </a-cylinder>
+            </a-entity>
+            
+            <!-- Refrigerator -->
+            <a-box 
+                position="1.5 1 0"
+                width="0.8"
+                height="2"
+                depth="0.6"
+                color="#FFFFFF"
+                shadow="cast: true; receive: true"
+                class="clickable">
+            </a-box>
+            
+            <!-- Animated Sink -->
+            <a-cylinder 
+                position="0.5 0.6 0"
+                radius="0.3"
+                height="0.1"
+                color="#C0C0C0"
+                animation="property: rotation; to: 0 360 0; dur: 3000; loop: true; easing: linear">
+            </a-cylinder>
+            
+            <!-- Kitchen Table -->
+            <a-cylinder 
+                position="0 0.4 -2"
+                radius="0.8"
+                height="0.8"
+                color="#8B4513"
+                shadow="cast: true; receive: true">
+            </a-cylinder>
+            
+            <!-- Chairs -->
+            <a-box 
+                position="-0.6 0.3 -2"
+                width="0.4"
+                height="0.6"
+                depth="0.4"
+                color="#8B4513"
+                shadow="cast: true; receive: true">
+            </a-box>
+            <a-box 
+                position="0.6 0.3 -2"
+                width="0.4"
+                height="0.6"
+                depth="0.4"
+                color="#8B4513"
+                shadow="cast: true; receive: true">
+            </a-box>
+            
+            <!-- Kitchen Cabinets -->
+            <a-box 
+                position="-0.5 1.2 0"
+                width="0.8"
+                height="0.6"
+                depth="0.5"
+                color="#8B4513"
+                shadow="cast: true; receive: true">
+            </a-box>
+            <a-box 
+                position="0.5 1.2 0"
+                width="0.8"
+                height="0.6"
+                depth="0.5"
+                color="#8B4513"
+                shadow="cast: true; receive: true">
+            </a-box>
+        </a-entity>
+        
+        <!-- Trees with bark and leaves textures -->
+        <a-entity id="trees">
+            <!-- Tree 1 -->
+            <a-cone 
+                position="-20 2 15"
+                radius-bottom="2"
+                height="6"
+                material="src: #leavesTex; roughness: 0.9; metalness: 0"
+                shadow="cast: true; receive: true"
+                animation="property: rotation; to: 0 0 2; dur: 3000; easing: easeInOutSine; loop: true; dir: alternate">
+            </a-cone>
+            <a-cylinder 
+                position="-20 0 15"
+                radius="0.5"
+                height="4"
+                material="src: #barkTex; roughness: 0.95; metalness: 0"
+                shadow="cast: true; receive: true">
+            </a-cylinder>
+            
+            <!-- Tree 2 -->
+            <a-cone 
+                position="20 2 -15"
+                radius-bottom="2"
+                height="6"
+                material="src: #leavesTex; roughness: 0.9; metalness: 0"
+                shadow="cast: true; receive: true"
+                animation="property: rotation; to: 0 0 -2; dur: 3000; easing: easeInOutSine; loop: true; dir: alternate">
+            </a-cone>
+            <a-cylinder 
+                position="20 0 -15"
+                radius="0.5"
+                height="4"
+                material="src: #barkTex; roughness: 0.95; metalness: 0"
+                shadow="cast: true; receive: true">
+            </a-cylinder>
+            
+            <!-- Tree 3 -->
+            <a-cone 
+                position="25 2 10"
+                radius-bottom="1.5"
+                height="5"
+                material="src: #leavesTex; roughness: 0.9; metalness: 0"
+                shadow="cast: true; receive: true">
+            </a-cone>
+            <a-cylinder 
+                position="25 0 10"
+                radius="0.4"
+                height="4"
+                material="src: #barkTex; roughness: 0.95; metalness: 0"
+                shadow="cast: true; receive: true">
+            </a-cylinder>
+            
+            <!-- Tree 4 -->
+            <a-cone 
+                position="-25 2 -10"
+                radius-bottom="1.8"
+                height="5.5"
+                material="src: #leavesTex; roughness: 0.9; metalness: 0"
+                shadow="cast: true; receive: true">
+            </a-cone>
+            <a-cylinder 
+                position="-25 0 -10"
+                radius="0.45"
+                height="4"
+                material="src: #barkTex; roughness: 0.95; metalness: 0"
+                shadow="cast: true; receive: true">
+            </a-cylinder>
+        </a-entity>
+        
+        <!-- Garden Plants with leaves texture -->
+        <a-entity id="garden">
+            <a-cone 
+                position="-15 0.2 10"
+                radius-bottom="0.3"
+                height="0.6"
+                material="src: #leavesTex; roughness: 0.9; metalness: 0"
+                animation="property: rotation; to: 0 0 5; dur: 2000; easing: easeInOutSine; loop: true; dir: alternate">
+            </a-cone>
+            <a-cone 
+                position="-12 0.2 12"
+                radius-bottom="0.3"
+                height="0.6"
+                material="src: #leavesTex; roughness: 0.9; metalness: 0"
+                animation="property: rotation; to: 0 0 -5; dur: 2000; easing: easeInOutSine; loop: true; dir: alternate">
+            </a-cone>
+            <a-cone 
+                position="10 0.2 15"
+                radius-bottom="0.3"
+                height="0.6"
+                material="src: #leavesTex; roughness: 0.9; metalness: 0"
+                animation="property: rotation; to: 0 0 5; dur: 2000; easing: easeInOutSine; loop: true; dir: alternate">
+            </a-cone>
+            <a-cone 
+                position="5 0.2 -12"
+                radius-bottom="0.25"
+                height="0.5"
+                material="src: #leavesTex; roughness: 0.9; metalness: 0"
+                animation="property: rotation; to: 0 0 -5; dur: 2000; easing: easeInOutSine; loop: true; dir: alternate">
+            </a-cone>
+        </a-entity>
+        
+        <!-- Vehicle (Lexus Car Model) -->
+        <a-entity 
+            id="car" 
+            gltf-model="#carModel"
+            position="25 0 0" 
+            rotation="0 90 0"
+            scale="0.8 0.8 0.8"
+            shadow="cast: true; receive: true">
+        </a-entity>
+        
+        <!-- Victorian Street Lamps -->
+        <a-entity 
+            id="lamp-1"
+            gltf-model="#streetLampModel"
+            position="-12 0 8"
+            scale="1 1 1"
+            shadow="cast: true; receive: true">
+            <a-light type="point" color="#FFD700" intensity="0.4" distance="8" position="0 3 0"></a-light>
+        </a-entity>
+        <a-entity 
+            id="lamp-2"
+            gltf-model="#streetLampModel"
+            position="12 0 -8"
+            scale="1 1 1"
+            shadow="cast: true; receive: true">
+            <a-light type="point" color="#FFD700" intensity="0.4" distance="8" position="0 3 0"></a-light>
+        </a-entity>
+        <a-entity 
+            id="lamp-3"
+            gltf-model="#streetLampModel"
+            position="20 0 5"
+            scale="1 1 1"
+            shadow="cast: true; receive: true">
+            <a-light type="point" color="#FFD700" intensity="0.4" distance="8" position="0 3 0"></a-light>
+        </a-entity>
+        
+        <!-- Pet (Dog) with walking animation -->
+        <a-entity id="dog" position="12 0.3 8" animation="property: position; to: 12 0.3 10; dur: 3000; easing: easeInOutSine; loop: true; dir: alternate">
+            <!-- Dog Body -->
+            <a-box 
+                position="0 0.2 0"
+                width="0.4"
+                height="0.3"
+                depth="0.6"
+                color="#8B4513"
+                shadow="cast: true; receive: true">
+            </a-box>
+            <!-- Dog Head -->
+            <a-sphere 
+                position="0 0.4 0.3"
+                radius="0.2"
+                color="#8B4513"
+                shadow="cast: true; receive: true">
+            </a-sphere>
+            <!-- Dog Ears -->
+            <a-box 
+                position="-0.1 0.5 0.4"
+                width="0.1"
+                height="0.15"
+                depth="0.05"
+                color="#654321"
+                rotation="0 0 -30">
+            </a-box>
+            <a-box 
+                position="0.1 0.5 0.4"
+                width="0.1"
+                height="0.15"
+                depth="0.05"
+                color="#654321"
+                rotation="0 0 30">
+            </a-box>
+            <!-- Dog Tail -->
+            <a-cylinder 
+                position="0 0.3 -0.4"
+                radius="0.05"
+                height="0.2"
+                color="#8B4513"
+                rotation="45 0 0"
+                animation="property: rotation; to: 45 0 30; dur: 1000; easing: easeInOutSine; loop: true; dir: alternate">
+            </a-cylinder>
+            <!-- Dog Legs -->
+            <a-box position="-0.15 0.05 0.2" width="0.08" height="0.2" depth="0.08" color="#654321"></a-box>
+            <a-box position="0.15 0.05 0.2" width="0.08" height="0.2" depth="0.08" color="#654321"></a-box>
+            <a-box position="-0.15 0.05 -0.2" width="0.08" height="0.2" depth="0.08" color="#654321"></a-box>
+            <a-box position="0.15 0.05 -0.2" width="0.08" height="0.2" depth="0.08" color="#654321"></a-box>
+        </a-entity>
+        
+        <!-- Camera with Enhanced Controls - Initial position captures full villa view -->
+        <a-entity 
+            id="camera-rig"
+            movement-controls="fly: false; constrainToNavMesh: false; speed: 0.1"
+            position="0 12 30">
+            <a-camera 
+                id="camera"
+                look-controls="pointerLockEnabled: true"
+                wasd-controls="enabled: true; acceleration: 65"
+                position="0 0 0">
+            </a-camera>
+        </a-entity>
+        
+        <!-- Cursor for Interaction -->
+        <a-cursor 
+            id="cursor"
+            animation__click="property: scale; startEvents: click; from: 0.8 0.8 0.8; to: 1 1 1; dur: 150"
+            animation__fusing="property: scale; startEvents: fusing; from: 1 1 1; to: 0.8 0.8 0.8; dur: 1500"
+            animation__mouseleave="property: scale; startEvents: mouseleave; from: 0.8 0.8 0.8; to: 1 1 1; dur: 150"
+            raycaster="objects: .clickable"
+            geometry="primitive: ring; radiusInner: 0.02; radiusOuter: 0.03"
+            material="color: #4CC3D9; shader: flat">
+        </a-cursor>
+        
+    </a-scene>
+    
+    <!-- Asset Management -->
+    <a-assets>
+        <a-asset-item id="villaModel" src="modern_villa_for_sale.glb"></a-asset-item>
+        <a-asset-item id="carModel" src="2025_lexus_lx700h.glb"></a-asset-item>
+        <a-asset-item id="streetLampModel" src="victorian_street_lamp.glb"></a-asset-item>
+        <!-- Textures -->
+        <img id="grassTex" src="ground-grassColor.jpeg">
+        <img id="skyTex" src="new-sky.jfif">
+        <img id="barkTex" src="tree-bark-texture.jpg">
+        <img id="leavesTex" src="leaves-texture.webp">
+    </a-assets>
+    
+    <script>
+        /**
+         * Pool Water Animation - JavaScript-driven wave effect
+         * Uses requestAnimationFrame for smooth, performant animation
+         */
+        (function() {
+            var poolAnimation = {
+                time: 0,
+                waveSpeed: 0.02,
+                wave1: { amplitude: 0.04, frequency: 1, phase: 0 },
+                wave2: { amplitude: 0.03, frequency: 1.5, phase: Math.PI / 2 },
+                wave3: { amplitude: 0.02, frequency: 2, phase: Math.PI },
+                poolContainer: null,
+                water1: null,
+                water2: null,
+                ripples: null,
+                running: false,
+
+                init: function() {
+                    this.poolContainer = document.querySelector('#pool-container');
+                    this.water1 = document.querySelector('#pool-water-1');
+                    this.water2 = document.querySelector('#pool-water-2');
+                    this.ripples = document.querySelector('#pool-ripples');
+                    if (this.water1 && this.water2 && this.ripples) {
+                        this.running = true;
+                        this.animate();
+                    }
+                },
+
+                getWaveHeight: function(baseY, config) {
+                    return baseY + Math.sin(this.time * config.frequency + config.phase) * config.amplitude;
+                },
+
+                animate: function() {
+                    if (!this.running) return;
+                    this.time += this.waveSpeed;
+
+                    // Layer 1: Primary surface waves
+                    var y1 = this.getWaveHeight(0.25, this.wave1) + 
+                             this.getWaveHeight(0, this.wave2) * 0.5;
+                    this.water1.setAttribute('position', { x: 0, y: y1, z: 0 });
+
+                    // Layer 2: Secondary depth waves (phase shifted)
+                    var y2 = this.getWaveHeight(0.2, this.wave2) + 
+                             this.getWaveHeight(0, this.wave3) * 0.5;
+                    this.water2.setAttribute('position', { x: 0, y: y2, z: 0 });
+
+                    // Ripples: Slow rotation + subtle scale pulse
+                    var rippleScale = 1 + Math.sin(this.time * 0.5) * 0.02;
+                    this.ripples.setAttribute('rotation', {
+                        x: -90,
+                        y: (this.time * 15) % 360,
+                        z: 0
+                    });
+                    this.ripples.setAttribute('scale', {
+                        x: rippleScale,
+                        y: rippleScale,
+                        z: 1
+                    });
+
+                    requestAnimationFrame(this.animate.bind(this));
+                }
+            };
+
+            // Start when A-Frame scene is loaded
+            document.addEventListener('DOMContentLoaded', function() {
+                var scene = document.querySelector('a-scene');
+                if (scene) {
+                    if (scene.hasLoaded) {
+                        poolAnimation.init();
+                    } else {
+                        scene.addEventListener('loaded', function() {
+                            poolAnimation.init();
+                        });
+                    }
+                } else {
+                    setTimeout(poolAnimation.init.bind(poolAnimation), 500);
+                }
+
+                // Click interactions
+                document.querySelectorAll('.clickable').forEach(function(el) {
+                    el.addEventListener('click', function() {
+                        console.log('Clicked:', el.id || 'element');
+                    });
+                });
+            });
+        })();
+    </script>
+</body>
+</html>
