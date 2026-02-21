@@ -70,8 +70,8 @@
         <a-light type="directional" position="-50 30 -50" intensity="0.4" color="#ffaa88"></a-light>
         <a-light type="point" position="0 10 0" intensity="0.6" distance="50" decay="2"></a-light>
         
-        <!-- Sky with nice light blue color -->
-        <a-sky id="sky" color="#87CEEB" radius="500"></a-sky>
+        <!-- Sky with texture -->
+        <a-sky id="sky" src="#skyTex" radius="500"></a-sky>
         
         <!-- Ground Plane with grass texture -->
         <a-plane 
@@ -81,7 +81,7 @@
             height="200" 
             position="0 0 0"
             shadow="receive: true"
-            material="src: #grassTex; repeat: 10 10; roughness: 0.9; metalness: 0">
+            material="src: #grassTex; repeat: 20 20; roughness: 0.95; metalness: 0; shader: standard">
         </a-plane>
         
         <!-- Main Villa Model -->
@@ -717,7 +717,7 @@
         <a-asset-item id="streetLampModel" src="victorian_street_lamp.glb"></a-asset-item>
         <!-- Textures -->
         <img id="grassTex" src="ground-grassColor.jpeg">
-        <img id="skyTex" src="new-sky.jfif">
+        <img id="skyTex" src="sky.png">
         <img id="barkTex" src="tree-bark-texture.jpg">
         <img id="leavesTex" src="leaves-texture.webp">
     </a-assets>
